@@ -1,4 +1,4 @@
-# zdash-gui
+# zdash-gui This will be updated with the new GUI release after 1.0.8-1 has been tested
 gui-wallet for zdash
 
 Installing and running the Wallet GUI
