@@ -1,21 +1,23 @@
-Zdash 1.0.8-1
+HUSH 1.0.8-1
 =============
 
-What is Zdash?
+Zdash rebranded to HUSH on May 1st 2017
+
+What is HUSH?
 --------------
 
-[Zdash] is a private implementation of the "Zerocash" protocol forked from [Zcash].
+[HUSH] is a private implementation of the "Zerocash" protocol forked from [Zcash].
 Based on Bitcoin's code, it intends to offer a far higher standard of privacy
 through a sophisticated zero-knowledge proving scheme that preserves
 confidentiality of transaction metadata. 
 
-This software is the Zdash client. It downloads and stores the entire history
-of Zdash transactions; depending on the speed of your computer and network
+This software is the HUSH client. It downloads and stores the entire history
+of HUSH transactions; depending on the speed of your computer and network
 connection, the synchronization process could take a day or more once the
 blockchain has reached a significant size.
 
 
-**Zdash is unfinished and highly experimental.** Use at your own risk.
+**HUSH is unfinished and highly experimental.** Use at your own risk.
 
 TEAM
 ----
@@ -37,7 +39,7 @@ https://zdash-slack.herokuapp.com/ //invite
 Building
 --------
 
-Build Zdash along with most dependencies from source by running
+Build HUSH along with most dependencies from source by running
 Get dependencies:
 ```{r, engine='bash'}
 
