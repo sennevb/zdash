@@ -270,7 +270,7 @@ bool CBlockTreeDB::ReadAddressIndex(uint160 addressHash, int type, std::vector<s
     boost::scoped_ptr<leveldb::Iterator> pcursor(NewIterator());
 
     CDataStream ssKeySet(SER_DISK, CLIENT_VERSION);
-    ssKeySet << make_pair(DB_ADDRESSINDEX, addressHash); //TODO include type
+    ssKeySet << make_pair(DB_ADDRESSINDEX, CAddressIndexIteratorKey(type, addressHash));
     pcursor->Seek(ssKeySet.str());
 
     while (pcursor->Valid()) {
