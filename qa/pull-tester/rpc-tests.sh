@@ -33,6 +33,7 @@ testScripts=(
     'fundrawtransaction.py'
     'signrawtransactions.py'
     'walletbackup.py'
+    'addressindex.py'
     'nodehandling.py'
     'reindex.py'
     'decodescript.py'
