@@ -460,23 +460,9 @@ UniValue setmocktime(const UniValue& params, bool fHelp)
     return NullUniValue;
 }
 
-Value getaddresstxids(const Array& params, bool fHelp)
+bool getAddressesFromParams(const Array& params, std::vector<std::pair<uint160, int> > &addresses)
 {
-    if (fHelp || params.size() != 1)
-        throw runtime_error(
-            "getaddresstxids\n"
-            "\nReturns the txids for an address (requires addressindex to be enabled).\n"
-            "\nResult\n"
-            "[\n"
-            "  \"transactionid\"  (string) The transaction id\n"
-            "  ,...\n"
-            "]\n"
-        );
-
-    std::vector<std::pair<uint160, int> > addresses;
-
     if (params[0].type() == str_type) {
-
         CBitcoinAddress address(params[0].get_str());
         uint160 hashBytes;
         int type = 0;
@@ -507,14 +493,77 @@ Value getaddresstxids(const Array& params, bool fHelp)
     } else {
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
     }
-        
+        return true;
+
+
+}
+
+Value getaddressbalance(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() != 1)
+        throw runtime_error(
+            "getaddressbalance\n"
+            "\nReturns the balance for an address (requires addressindex to be enabled).\n"
+            "\nResult\n"
+            "{\n"
+            "  \"balance\"  (string) The current balance\n"
+            "  ,...\n"
+            "}\n"
+        );
+
+    std::vector<std::pair<uint160, int> > addresses;
+
+    if (!getAddressesFromParams(params, addresses)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
+    }
+
+    std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
+
+    for (std::vector<std::pair<uint160, int> >::iterator it = addresses.begin(); it != addresses.end(); it++) {
+        if (!GetAddressIndex((*it).first, (*it).second, addressIndex)) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
+        }
+    }
+
+    CAmount balance = 0;
+
+    for (std::vector<std::pair<CAddressIndexKey, CAmount> >::const_iterator it=addressIndex.begin(); it!=addressIndex.end(); it++) {
+        balance += it->second;
+    }
+
+    Object result;
+    result.push_back(Pair("balance", balance));
+
+    return result;
+
+}
+
+Value getaddresstxids(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() != 1)
+        throw runtime_error(
+            "getaddresstxids\n"
+            "\nReturns the txids for an address (requires addressindex to be enabled).\n"
+            "\nResult\n"
+            "[\n"
+            "  \"transactionid\"  (string) The transaction id\n"
+            "  ,...\n"
+            "]\n"
+        );
+
+    std::vector<std::pair<uint160, int> > addresses;
+
+    if (!getAddressesFromParams(params, addresses)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
+    }
+
     CKeyID keyID;
     address.GetKeyID(keyID);
 
     int type = 1; // TODO
     std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
 
-    for (std::vector<std::pair<uint160, int> >::iterator it = addresses.begin(); it != addresses.end(); ++it) {
+    for (std::vector<std::pair<uint160, int> >::iterator it = addresses.begin(); it != addresses.end(); it++) {
         if (!GetAddressIndex((*it).first, (*it).second, addressIndex)) {
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
         }
