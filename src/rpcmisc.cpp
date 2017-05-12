@@ -531,7 +531,9 @@ Value getaddresstxids(const Array& params, bool fHelp)
         }
     }
  
+   if (addresses.size() > 1) {
     std::sort(vtxids.begin(), vtxids.end());
+   }
     
     Array result;
     for (std::vector<std::pair<int, std::string> >::const_iterator it=vtxids.begin(); it!=vtxids.end(); it++) {
