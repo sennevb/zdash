@@ -174,6 +174,7 @@ extern void EnsureWalletIsUnlocked();
 
 extern UniValue getconnectioncount(const UniValue& params, bool fHelp); // in rpcnet.cpp
 extern json_spirit::Value getaddresstxids(const json_spirit::Array& params, bool fHelp);
++extern json_spirit::Value getaddressbalance(const json_spirit::Array& params, bool fHelp);
 
 extern UniValue getpeerinfo(const UniValue& params, bool fHelp);
 extern UniValue ping(const UniValue& params, bool fHelp);
