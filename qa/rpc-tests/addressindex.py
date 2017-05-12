@@ -64,6 +64,10 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(txids[1], txid1);
         assert_equal(txids[2], txid2);
   
+         # Check that multiple addresses works
+        multitxids = self.nodes[1].getaddresstxids({"addresses": ["2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br", "mo9ncXisMeAoXwqcV5EWuyncbmCcQN4rVs"]});
+        assert_equal(len(multitxids), 6);
+
 # Check that outputs with the same address will only return one txid
         print "Testing for txid uniqueness..."
         addressHash = "6349a418fc4578d10a372b54b45c280cc8c4382f".decode("hex")
