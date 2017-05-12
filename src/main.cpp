@@ -60,6 +60,7 @@ bool fExperimentalMode = false;
 bool fImporting = false;
 bool fReindex = false;
 bool fTxIndex = false;
+bool fAddressIndex = false;
 bool fHavePruned = false;
 bool fPruneMode = false;
 bool fIsBareMultisigStd = true;
