@@ -34,6 +34,7 @@ testScripts=(
     'signrawtransactions.py'
     'walletbackup.py'
     'addressindex.py'
+    'timestampindex.py'
     'nodehandling.py'
     'reindex.py'
     'decodescript.py'
