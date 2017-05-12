@@ -473,10 +473,38 @@ Value getaddresstxids(const Array& params, bool fHelp)
             "]\n"
         );
 
-    CBitcoinAddress address(params[0].get_str());
-    uint160 hashBytes;
-    int type = 0;
-    if (!address.GetIndexKey(hashBytes, type)) {
+    std::vector<std::pair<uint160, int> > addresses;
+
+    if (params[0].type() == str_type) {
+
+        CBitcoinAddress address(params[0].get_str());
+        uint160 hashBytes;
+        int type = 0;
+        if (!address.GetIndexKey(hashBytes, type)) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
+        }
+        addresses.push_back(std::make_pair(hashBytes, type));
+
+    } else if (params[0].type() == obj_type) {
+
+        Value addressValues = find_value(params[0].get_obj(), "addresses");
+        if (!addressValues.type() == array_type) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Addresses is expected to be an array");
+        }
+
+        Array values = addressValues.get_array();
+
+        for (Array::iterator it = values.begin(); it != values.end(); ++it) {
+
+            CBitcoinAddress address(it->get_str());
+            uint160 hashBytes;
+            int type = 0;
+            if (!address.GetIndexKey(hashBytes, type)) {
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
+            }
+            addresses.push_back(std::make_pair(hashBytes, type));
+        }
+    } else {
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
     }
         
@@ -486,11 +514,13 @@ Value getaddresstxids(const Array& params, bool fHelp)
     int type = 1; // TODO
     std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
 
-    LOCK(cs_main);
-
-    if (!GetAddressIndex(hashBytes, type, addressIndex))
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
-
+    for (std::vector<std::pair<uint160, int> >::iterator it = addresses.begin(); it != addresses.end(); ++it) {
+        if (!GetAddressIndex((*it).first, (*it).second, addressIndex)) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
+        }
+    }
+    
+    // TODO sort by height
     std::set<std::string> txids;
     
     Array result;
