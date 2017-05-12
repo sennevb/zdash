@@ -35,6 +35,7 @@ testScripts=(
     'walletbackup.py'
     'addressindex.py'
     'timestampindex.py'
+    'spentindex.py'
     'nodehandling.py'
     'reindex.py'
     'decodescript.py'
