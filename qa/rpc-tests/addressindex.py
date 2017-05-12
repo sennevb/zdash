@@ -44,6 +44,10 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(self.nodes[1].getbalance(), 0)
         assert_equal(self.nodes[2].getbalance(), 0)
         
+        # Check that balances are correct
+        balance0 = self.nodes[1].getaddressbalance("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br")
+        assert_equal(balance0['balance'], 0);
+        
         # Check p2pkh and p2sh address indexes
         print "Testing p2pkh and p2sh address index..."
 
@@ -76,7 +80,11 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(multitxids[3], txidb1);
         assert_equal(multitxids[4], txid2);
         assert_equal(multitxids[5], txidb2);
-
+         
+       # Check that balances are correct
+    balance0 = self.nodes[1].getaddressbalance("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br")
+    assert_equal(balance0['balance'], 45 * 100000000);
+            
 # Check that outputs with the same address will only return one txid
         print "Testing for txid uniqueness..."
         addressHash = "6349a418fc4578d10a372b54b45c280cc8c4382f".decode("hex")
@@ -97,6 +105,10 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(len(txidsmany), 4);
         assert_equal(txidsmany[3], sent_txid);
 
+        # Check that balances are correct
+        balance0 = self.nodes[1].getaddressbalance("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br")
+        assert_equal(balance0['balance'], 45 * 100000000 + 21);
+        
         print "Passed\n"
 
 if __name__ == '__main__':
