@@ -23,6 +23,7 @@ struct CAddressIndexKey;
 struct CAddressIndexIteratorKey;
 struct CTimestampIndexKey;
 struct CTimestampIndexIteratorKey;
+struct CAddressIndexIteratorHeightKey;
 struct CSpentIndexKey;
 struct CSpentIndexValue;
 class uint256;
