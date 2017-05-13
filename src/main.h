@@ -534,11 +534,7 @@ struct CAddressIndexIteratorKey {
     uint160 hashBytes;
 
     size_t GetSerializeSize(int nType, int nVersion) const {
-        if (includeHeight) {
-            return 25;
-        } else {
            return 21;
-        }
     }
     template<typename Stream>
     void Serialize(Stream& s, int nType, int nVersion) const {
@@ -557,13 +553,8 @@ struct CAddressIndexIteratorKey {
         includeHeight = false;
     }
     
-    CAddressIndexIteratorKey(unsigned int addressType, uint160 addressHash, int height) {
-        type = addressType;
-        hashBytes = addressHash;
-        blockHeight = height;
-        includeHeight = true;
-    }
-
+    
+    
     CAddressIndexIteratorKey() {
         SetNull();
     }
@@ -571,7 +562,44 @@ struct CAddressIndexIteratorKey {
     void SetNull() {
         type = 0;
         hashBytes.SetNull();
-        includeHeight = false;
+    }
+};
+
+struct CAddressIndexIteratorHeightKey {
+    unsigned int type;
+    uint160 hashBytes;
+    int blockHeight;
+
+    size_t GetSerializeSize(int nType, int nVersion) const {
+        return 25;
+    }
+    template<typename Stream>
+    void Serialize(Stream& s, int nType, int nVersion) const {
+        ser_writedata8(s, type);
+        hashBytes.Serialize(s, nType, nVersion);
+        ser_writedata32be(s, blockHeight);
+    }
+    template<typename Stream>
+    void Unserialize(Stream& s, int nType, int nVersion) {
+        type = ser_readdata8(s);
+        hashBytes.Unserialize(s, nType, nVersion);
+        blockHeight = ser_readdata32be(s);
+    }
+
+    CAddressIndexIteratorHeightKey(unsigned int addressType, uint160 addressHash, int height) {
+        type = addressType;
+        hashBytes = addressHash;
+        blockHeight = height;
+    }
+
+    CAddressIndexIteratorHeightKey() {
+        SetNull();
+    }
+
+    void SetNull() {
+        type = 0;
+        hashBytes.SetNull();
+        blockHeight = 0;
     }
 };
 struct CDiskTxPos : public CDiskBlockPos
