@@ -62,8 +62,8 @@ class SpentIndexTest(BitcoinTestFramework):
         self.nodes[0].generate(1)
         self.sync_all()
 
-         print "Testing getspentinfo method..."
-        
+        print "Testing getspentinfo method..."
+
         # Check that the spentinfo works standalone
         info = self.nodes[1].getspentinfo({"txid": unspent[0]["txid"], "index": unspent[0]["vout"]})
         assert_equal(info["txid"], txid)
@@ -71,14 +71,14 @@ class SpentIndexTest(BitcoinTestFramework):
         assert_equal(info["height"], 106)
 
         print "Testing getrawtransaction method..."
-        
+
         # Check that verbose raw transaction includes spent info
         txVerbose = self.nodes[3].getrawtransaction(unspent[0]["txid"], 1)
         assert_equal(txVerbose["vout"][unspent[0]["vout"]]["spentTxId"], txid)
         assert_equal(txVerbose["vout"][unspent[0]["vout"]]["spentIndex"], 0)
         assert_equal(txVerbose["vout"][unspent[0]["vout"]]["spentHeight"], 106)
-        
-         # Check that verbose raw transaction includes input values
+
+        # Check that verbose raw transaction includes input values
         txVerbose2 = self.nodes[3].getrawtransaction(txid, 1)
         assert_equal(txVerbose2["vin"][0]["value"], Decimal(unspent[0]["amount"]))
         assert_equal(txVerbose2["vin"][0]["valueSat"], amount)
@@ -95,14 +95,17 @@ class SpentIndexTest(BitcoinTestFramework):
         self.nodes[0].importprivkey(privkey)
         signed_tx2 = self.nodes[0].signrawtransaction(binascii.hexlify(tx2.serialize()).decode("utf-8"))
         txid2 = self.nodes[0].sendrawtransaction(signed_tx2["hex"], True)
-        
-        
+
         # Check the mempool index
         self.sync_all()
         txVerbose3 = self.nodes[1].getrawtransaction(txid2, 1)
         assert_equal(txVerbose3["vin"][0]["address"], address2)
         assert_equal(txVerbose3["vin"][0]["value"], Decimal(unspent[0]["amount"]))
         assert_equal(txVerbose3["vin"][0]["valueSat"], amount)
+
+        # Check that the input confirmations work for mempool unconfirmed transactions
+        assert_equal(txVerbose3["vin"][0].has_key("height"), False)
+        assert_equal(txVerbose3["vin"][0]["confirmations"], 0)
 
         # Check the database index
         self.nodes[0].generate(1)
@@ -112,6 +115,12 @@ class SpentIndexTest(BitcoinTestFramework):
         assert_equal(txVerbose4["vin"][0]["address"], address2)
         assert_equal(txVerbose4["vin"][0]["value"], Decimal(unspent[0]["amount"]))
         assert_equal(txVerbose4["vin"][0]["valueSat"], amount)
+
+        # Check that the input confirmations work
+        assert_equal(txVerbose4["vin"][0]["height"], 107)
+        assert_equal(txVerbose4["vin"][0]["confirmations"], 1)
+
+        print "Passed\n"
 
 
 if __name__ == '__main__':
