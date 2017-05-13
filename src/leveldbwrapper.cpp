@@ -43,14 +43,14 @@ static leveldb::Options GetOptions(size_t nCacheSize, bool compression, int maxO
     return options;
 }
 
-CLevelDBWrapper::CLevelDBWrapper(const boost::filesystem::path& path, size_t nCacheSize, bool fMemory, bool fWipe)
+CLevelDBWrapper::CLevelDBWrapper(const boost::filesystem::path& path, size_t nCacheSize, bool fMemory, bool fWipe, bool compression, int maxOpenFiles)
 {
     penv = NULL;
     readoptions.verify_checksums = true;
     iteroptions.verify_checksums = true;
     iteroptions.fill_cache = false;
     syncoptions.sync = true;
-    options = GetOptions(nCacheSize);
+    options = GetOptions(nCacheSize, compression, maxOpenFiles);
     options.create_if_missing = true;
     if (fMemory) {
         penv = leveldb::NewMemEnv(leveldb::Env::Default());
