@@ -114,6 +114,7 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "z_importkey", 2 },
     { "getblockhashes", 0 },
    { "getblockhashes", 1 },
+    { "getblockhashes", 2 },
     { "getspentinfo", 0},
     { "getaddresstxids", 0},
      { "getaddressbalance", 0},
