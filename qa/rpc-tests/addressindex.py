@@ -44,26 +44,32 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(chain_height, 105)
         assert_equal(self.nodes[1].getbalance(), 0)
         assert_equal(self.nodes[2].getbalance(), 0)
-        
+
         # Check that balances are correct
         balance0 = self.nodes[1].getaddressbalance("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br")
         assert_equal(balance0["balance"], 0)
-        
+
         # Check p2pkh and p2sh address indexes
         print "Testing p2pkh and p2sh address index..."
 
         txid0 = self.nodes[0].sendtoaddress("mo9ncXisMeAoXwqcV5EWuyncbmCcQN4rVs", 10)
         self.nodes[0].generate(1)
+
         txidb0 = self.nodes[0].sendtoaddress("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br", 10)
         self.nodes[0].generate(1)
+
         txid1 = self.nodes[0].sendtoaddress("mo9ncXisMeAoXwqcV5EWuyncbmCcQN4rVs", 15)
         self.nodes[0].generate(1)
+
         txidb1 = self.nodes[0].sendtoaddress("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br", 15)
         self.nodes[0].generate(1)
+
         txid2 = self.nodes[0].sendtoaddress("mo9ncXisMeAoXwqcV5EWuyncbmCcQN4rVs", 20)
         self.nodes[0].generate(1)
+
         txidb2 = self.nodes[0].sendtoaddress("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br", 20)
         self.nodes[0].generate(1)
+
         self.sync_all()
 
         txids = self.nodes[1].getaddresstxids("mo9ncXisMeAoXwqcV5EWuyncbmCcQN4rVs")
@@ -71,16 +77,15 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(txids[0], txid0)
         assert_equal(txids[1], txid1)
         assert_equal(txids[2], txid2)
-        
+
         txidsb = self.nodes[1].getaddresstxids("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br")
         assert_equal(len(txidsb), 3)
         assert_equal(txidsb[0], txidb0)
         assert_equal(txidsb[1], txidb1)
-         assert_equal(txidsb[2], txidb2)
-  
- # Check that limiting by height works
-    print "Testing querying txids by range of block heights.."
-        chain_height = self.nodes[1].getblockcount()
+        assert_equal(txidsb[2], txidb2)
+
+        # Check that limiting by height works
+        print "Testing querying txids by range of block heights.."
         height_txids = self.nodes[1].getaddresstxids({
             "addresses": ["2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br"],
             "start": 105,
@@ -90,8 +95,8 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(height_txids[0], txidb0)
         assert_equal(height_txids[1], txidb1)
 
-         # Check that multiple addresses works
-        multitxids = self.nodes[1].getaddresstxids({"addresses": ["2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br", "mo9ncXisMeAoXwqcV5EWuyncbmCcQN4rVs"]});
+        # Check that multiple addresses works
+        multitxids = self.nodes[1].getaddresstxids({"addresses": ["2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br", "mo9ncXisMeAoXwqcV5EWuyncbmCcQN4rVs"]})
         assert_equal(len(multitxids), 6)
         assert_equal(multitxids[0], txid0)
         assert_equal(multitxids[1], txidb0)
@@ -99,12 +104,12 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(multitxids[3], txidb1)
         assert_equal(multitxids[4], txid2)
         assert_equal(multitxids[5], txidb2)
-         
-       # Check that balances are correct
-    balance0 = self.nodes[1].getaddressbalance("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br")
-    assert_equal(balance0["balance"], 45 * 100000000)
-            
-# Check that outputs with the same address will only return one txid
+
+        # Check that balances are correct
+        balance0 = self.nodes[1].getaddressbalance("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br")
+        assert_equal(balance0["balance"], 45 * 100000000)
+
+        # Check that outputs with the same address will only return one txid
         print "Testing for txid uniqueness..."
         addressHash = "6349a418fc4578d10a372b54b45c280cc8c4382f".decode("hex")
         scriptPubKey = CScript([OP_HASH160, addressHash, OP_EQUAL])
@@ -127,10 +132,10 @@ class AddressIndexTest(BitcoinTestFramework):
         # Check that balances are correct
         print "Testing balances..."
         balance0 = self.nodes[1].getaddressbalance("2N2JD6wb56AfK4tfmM6PwdVmoYk2dCKf4Br")
-        assert_equal(balance0['balance'], 45 * 100000000 + 21)
-        
+        assert_equal(balance0["balance"], 45 * 100000000 + 21)
+
         # Check that balances are correct after spending
-         print "Testing balances after spending..."
+        print "Testing balances after spending..."
         privkey2 = "cSdkPxkAjA4HDr5VHgsebAPDEh9Gyub4HK8UJr2DFGGqKKy4K5sG"
         address2 = "mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW"
         addressHash2 = "0b2f0a0c31bfe0406b0ccc1381fdbe311946dadc".decode("hex")
@@ -173,38 +178,38 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(balance3, change_amount)
         assert_equal(deltas[0]["address"], address2)
         assert_equal(deltas[0]["blockindex"], 1)
-        
-         # Check that entire range will be queried
+
+        # Check that entire range will be queried
         deltasAll = self.nodes[1].getaddressdeltas({"addresses": [address2]})
         assert_equal(len(deltasAll), len(deltas))
-        
+
         # Check that deltas can be returned from range of block heights
         deltas = self.nodes[1].getaddressdeltas({"addresses": [address2], "start": 113, "end": 113})
         assert_equal(len(deltas), 1)
-        
-         # Check that unspent outputs can be queried
-            print "Testing utxos..."
-            utxos = self.nodes[1].getaddressutxos({"addresses": [address2]})
-            assert_equal(len(utxos), 1)
-            assert_equal(utxos[0]["satoshis"], change_amount)
-            
+
+        # Check that unspent outputs can be queried
+        print "Testing utxos..."
+        utxos = self.nodes[1].getaddressutxos({"addresses": [address2]})
+        assert_equal(len(utxos), 1)
+        assert_equal(utxos[0]["satoshis"], change_amount)
+
         # Check that indexes will be updated with a reorg
         print "Testing reorg..."
-        
+
         best_hash = self.nodes[0].getbestblockhash()
         self.nodes[0].invalidateblock(best_hash)
         self.nodes[1].invalidateblock(best_hash)
         self.nodes[2].invalidateblock(best_hash)
         self.nodes[3].invalidateblock(best_hash)
         self.sync_all()
-        
+
         balance4 = self.nodes[1].getaddressbalance(address2)
         assert_equal(balance4, balance1)
-        
+
         utxos2 = self.nodes[1].getaddressutxos({"addresses": [address2]})
         assert_equal(len(utxos2), 1)
         assert_equal(utxos2[0]["satoshis"], 5000000000)
-        
+
         # Check sorting of utxos
         self.nodes[2].generate(150)
 
@@ -219,7 +224,7 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(utxos3[0]["height"], 114)
         assert_equal(utxos3[1]["height"], 264)
         assert_equal(utxos3[2]["height"], 265)
-        
+
         # Check mempool indexing
         print "Testing mempool indexing..."
 
@@ -241,25 +246,29 @@ class AddressIndexTest(BitcoinTestFramework):
         tx2 = CTransaction()
         tx2.vin = [CTxIn(COutPoint(int(unspent[1]["txid"], 16), unspent[1]["vout"]))]
         amount = unspent[1]["amount"] * 100000000
-        tx2.vout = [CTxOut(amount, scriptPubKey3)]
+        tx2.vout = [CTxOut(amount / 2, scriptPubKey3), CTxOut(amount / 2, scriptPubKey3)]
         tx2.rehash()
         signed_tx2 = self.nodes[2].signrawtransaction(binascii.hexlify(tx2.serialize()).decode("utf-8"))
         memtxid2 = self.nodes[2].sendrawtransaction(signed_tx2["hex"], True)
         time.sleep(2)
 
         mempool = self.nodes[2].getaddressmempool({"addresses": [address3]})
-        assert_equal(len(mempool), 2)
+        assert_equal(len(mempool), 3)
         assert_equal(mempool[0]["txid"], memtxid1)
-        assert_equal(mempool[1]["txid"], memtxid2)
         assert_equal(mempool[0]["address"], address3)
-        
+        assert_equal(mempool[0]["index"], 0)
+        assert_equal(mempool[1]["txid"], memtxid2)
+        assert_equal(mempool[1]["index"], 0)
+        assert_equal(mempool[2]["txid"], memtxid2)
+        assert_equal(mempool[2]["index"], 1)
+
         self.nodes[2].generate(1);
         self.sync_all();
         mempool2 = self.nodes[2].getaddressmempool({"addresses": [address3]})
         assert_equal(len(mempool2), 0)
-        
+
         tx = CTransaction()
-        tx.vin = [CTxIn(COutPoint(int(memtxid2, 16), 0))]
+        tx.vin = [CTxIn(COutPoint(int(memtxid2, 16), 0)), CTxIn(COutPoint(int(memtxid2, 16), 1))]
         tx.vout = [CTxOut(amount - 10000, scriptPubKey2)]
         tx.rehash()
         self.nodes[2].importprivkey(privKey3)
@@ -268,13 +277,14 @@ class AddressIndexTest(BitcoinTestFramework):
         time.sleep(2)
 
         mempool3 = self.nodes[2].getaddressmempool({"addresses": [address3]})
-        assert_equal(len(mempool3), 1)
+        assert_equal(len(mempool3), 2)
         assert_equal(mempool3[0]["prevtxid"], memtxid2)
         assert_equal(mempool3[0]["prevout"], 0)
+        assert_equal(mempool3[1]["prevtxid"], memtxid2)
+        assert_equal(mempool3[1]["prevout"], 1)
 
-        
-        
         print "Passed\n"
+
 
 if __name__ == '__main__':
     AddressIndexTest().main()
