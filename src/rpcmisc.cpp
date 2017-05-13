@@ -732,6 +732,17 @@ Value getaddresstxids(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
     }
 
+    int start = 0;
+    int end = 0;
+    if (params[0].type() == obj_type) {
+        Value startValue = find_value(params[0].get_obj(), "start");
+        Value endValue = find_value(params[0].get_obj(), "end");
+    if (startValue.type() == int_type && endValue.type() == int_type) {
+       start = startValue.get_int();
+         end = startValue.get_int();
+    }
+    }
+    
     CKeyID keyID;
     address.GetKeyID(keyID);
 
@@ -739,9 +750,14 @@ Value getaddresstxids(const Array& params, bool fHelp)
     std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
 
     for (std::vector<std::pair<uint160, int> >::iterator it = addresses.begin(); it != addresses.end(); it++) {
-        if (!GetAddressIndex((*it).first, (*it).second, addressIndex)) {
+        if (start > 0 && end > 0) {
+            if (!GetAddressIndex((*it).first, (*it).second, addressIndex, start, end)) {
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
+            }
+        } else {
+            if (!GetAddressIndex((*it).first, (*it).second, addressIndex)) {
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
-        }
+            }
     }
     
     std::set<std::pair<int, std::string> > txids;
